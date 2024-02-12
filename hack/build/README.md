@@ -11,9 +11,9 @@ Scripts in this directory help to run/test RHTAP pipeline.
     oc -n rhacs-operator get secret central-htpasswd -o go-template='{{index .data "password" | base64decode}}'
     ```
     3. Find `Route` named `central` in `rhacs-operator` namespace and open it.
-    Login with `admin` and password obtained in the previos step.
+    Login with `admin` and password obtained in the previous step.
     Note, if the route cannot be open, check `central-db` deployment in `rhacs-operator` namespace.
-    One might need to lower CPU and memory usege of the deployment.
+    One might need to lower CPU and memory usage of the deployment.
     4. In the left sidebar click `Integrations` and scroll to `Authentication Tokens` section. Click `STackRox` `API Token` and `Generate Token` button. Set `rox-api-token` into name and `Continuous Integration` as role. Click `Generate`.
     5. Save the token.
 
@@ -66,8 +66,8 @@ oc apply -f ${ROOT_DIR}/pac/pipelines
 3. Run `run-build.sh` script:
 ```
 export GIT_REPO_URL=https://github.com/devfile-samples/devfile-sample-go-basic
-./hack.build/run-build.sh
+./hack/build/run-build.sh
 ```
-If you need other parameters for the pipeline run, edit the difinition in the script.
+If you need other parameters for the pipeline run, edit the definition in the script.
 
 4. Check the corresponding `PipelineRun` in your namespace.
