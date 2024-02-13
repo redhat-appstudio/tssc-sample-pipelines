@@ -54,6 +54,7 @@ so step 2 in testing section can be skipped.
   - `GIT_REVISION`
   - `IMAGE_REPOSITORY`
   - `PIPELINE`
+  - `DOCKER_FILEPATH`
 
 or open `run-build.sh` and set default values according to your use-case to avoid setting all or some environment variables.
 

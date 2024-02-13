@@ -25,7 +25,7 @@ function provisionNamespace() {
     oc create secret docker-registry docker-push-secret \
       --docker-server=${IMAGE_REPOSITORY} --docker-username=${DOCKER_USERNAME} --docker-password=${DOCKER_PASSWORD}
     oc secret link rhtap-pipeline docker-push-secret
-    oc secret link rhtap-pipeline docker-push-secret --for=pull
+    oc secret link rhtap-pipeline docker-push-secret --for=pull,mount
 
     oc create rolebinding rhtap-pipelines-runner --clusterrole=rhtap-pipelines-runner --serviceaccount=${NAMESPACE}:rhtap-pipeline
 

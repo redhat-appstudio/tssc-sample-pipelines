@@ -3,6 +3,7 @@
 # Default values
 default_git_repo_url=https://github.com/devfile-samples/devfile-sample-go-basic
 default_git_revision=main
+default_docker_filepath=docker/Dockerfile
 
 default_pipeline=docker-build-rhtap
 
@@ -21,6 +22,7 @@ source "$config_file"
 GIT_REPO_URL="${GIT_REPO_URL:-$default_git_repo_url}"
 GIT_REVISION="${GIT_REVISION:-$default_git_revision}"
 OUTPUT_IMAGE="${OUTPUT_IMAGE:-$IMAGE_REPOSITORY}"
+DOCKER_FILEPATH="${DOCKER_FILEPATH:-$default_docker_filepath}"
 
 PIPELINE="${PIPELINE:-$default_pipeline}"
 
@@ -47,7 +49,7 @@ spec:
     - name: output-image
       value: "${OUTPUT_IMAGE}"
     - name: dockerfile
-      value: docker/Dockerfile
+      value: "${DOCKER_FILEPATH}"
     - name: stackrox-endpoint
       value: "${ROX_ENDPOINT}"
   taskRunTemplate:
