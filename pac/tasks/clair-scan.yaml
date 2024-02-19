@@ -26,7 +26,7 @@ spec:
       description: Clair scan result.
   steps:
     - name: get-vulnerabilities
-      image: quay.io/redhat-appstudio/clair-in-ci:v1  # explicit floating tag, daily updates, per arch call this is exempt for now for use of image digest
+      image: quay.io/redhat-appstudio/clair-in-ci:v1 # explicit floating tag, daily updates, per arch call this is exempt for now for use of image digest
       imagePullPolicy: Always
       env:
         - name: IMAGE_URL

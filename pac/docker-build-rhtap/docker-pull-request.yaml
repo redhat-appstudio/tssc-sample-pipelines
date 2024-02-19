@@ -1,8 +1,9 @@
+---
 apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
-  name: {{ values.name }}-on-pull-request
-  namespace: {{ values.namespace }}
+  name: "{{values.name}}-on-pull-request"
+  namespace: {{values.namespace}}
   annotations:
     pipelinesascode.tekton.dev/on-event: "[pull_request]"
     pipelinesascode.tekton.dev/on-target-branch: "[main]"
@@ -21,18 +22,18 @@ metadata:
     pipelinesascode.tekton.dev/task-10: "{{values.rawUrl}}/pac/tasks/update-deployment.yaml"
 spec:
   params:
-  - name: dockerfile
-    value: {{ values.dockerfile }}
-  - name: git-url
-    value: '{{repo_url}}'
-  - name: image-expires-after
-    value: 5d
-  - name: output-image
-    value: {{ values.image }}:on-pr-{{revision}}
-  - name: path-context
-    value: {{ values.buildContext }}
-  - name: revision
-    value: '{{revision}}'
+    - name: dockerfile
+      value: {{values.dockerfile}}
+    - name: git-url
+      value: '{{repo_url}}'
+    - name: image-expires-after
+      value: 5d
+    - name: output-image
+      value: "{{values.image}}:on-pr-{{revision}}"
+    - name: path-context
+      value: {{values.buildContext}}
+    - name: revision
+      value: '{{revision}}'
   pipelineRef:
     name: docker-build-rhtap
   workspaces:
@@ -40,7 +41,7 @@ spec:
       volumeClaimTemplate:
         spec:
           accessModes:
-          - ReadWriteOnce
+            - ReadWriteOnce
           resources:
             requests:
               storage: 1Gi

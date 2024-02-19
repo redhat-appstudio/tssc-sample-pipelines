@@ -1,15 +1,16 @@
+---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: scan-export-sbom
 spec:
   params:
-  - default: https://cyclonedx-bom-repo-server-cyclonedx.apps.cluster-tr47n.tr47n.sandbox987.opentlc.com/
-    name: cyclonedxHostUrl
-    type: string
-  - default:
-    name: image
-    type: string
+    - default: https://cyclonedx-bom-repo-server-cyclonedx.apps.cluster-tr47n.tr47n.sandbox987.opentlc.com/
+      name: cyclonedxHostUrl
+      type: string
+    - default:
+      name: image
+      type: string
   results:
     - description: The url location of the generate SBOM
       name: sbomUrl
@@ -23,7 +24,7 @@ spec:
         - --output-file
         - bom.json
       workingDir: /workspace/repository
-    - image: 'ubi9/ubi'
+    - image: "ubi9/ubi"
       name: export-sbom
       resources:
         requests:
@@ -40,7 +41,7 @@ spec:
         printf "%s" "$LOCATION" > "$(results.sbomUrl.path)"
 
       workingDir: /workspace/repository
-    - image: 'quay.io/redhat-gpte/grype:0.65.2'
+    - image: "quay.io/redhat-gpte/grype:0.65.2"
       name: scan-sbom
       resources:
         requests:
@@ -51,4 +52,4 @@ spec:
         grype sbom:./bom.json -o table
       workingDir: /workspace/repository
   workspaces:
-  - name: repository
+    - name: repository

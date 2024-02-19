@@ -2,20 +2,20 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: {{ .Values.app.name }}-promote
+  name: "{{.Values.app.name}}-promote"
   labels:
     type: pipeline
-    backstage.io/kubernetes-id: {{ .Values.app.name }}
+    backstage.io/kubernetes-id: {{.Values.app.name}}
 spec:
   params:
     - name: source-image
       description: source image to promote
       type: string
-      default: {{ include "image.dev-url" . }}
+      default: {{include "image.dev-url" .}}
     - name: destination-image
       description: destination image to promote to
       type: string
-      default: {{ include "image.preprod-url" . }}
+      default: {{include "image.preprod-url" .}}
     - name: source-image-tag
       type: string
       default: latest
@@ -48,13 +48,13 @@ spec:
     - name: verify-enterprise-contract
       params:
         - name: IMAGE
-          value: '$(params.source-image):$(params.source-image-tag)'
+          value: "$(params.source-image):$(params.source-image-tag)"
         - name: COMPONENT_ID
-          value: {{ .Values.app.name }}
+          value: "{{ .Values.app.name }}"
         - name: REKOR_HOST
-          value: '$(params.rekor-host)'
+          value: "$(params.rekor-host)"
         - name: POLICY_CONFIGURATION
-          value: '$(params.policy-configuration)'
+          value: "$(params.policy-configuration)"
       taskRef:
         kind: Task
         name: verify-enterprise-contract
