@@ -16,7 +16,7 @@ if [ ! -f "${CONFIG_FILE}" ]; then
   echo "$SCRIPT_DIR/build-config.env does not exists. Look at instructions in $SCRIPT_DIR/build-config-template.env"
   exit 1
 fi
-# Get IMAGE_REPOSITORY and ROX_ENDPOINT
+# Get IMAGE_REPOSITORY
 # shellcheck source=/dev/null
 source "${CONFIG_FILE}"
 
@@ -26,10 +26,6 @@ OUTPUT_IMAGE="${OUTPUT_IMAGE:-$IMAGE_REPOSITORY}"
 DOCKER_FILEPATH="${DOCKER_FILEPATH:-$default_docker_filepath}"
 
 PIPELINE="${PIPELINE:-$default_pipeline}"
-
-if [ "$ROX_ENDPOINT" == 'in-cluster' ] ; then
-  ROX_ENDPOINT=$(oc get route central -o jsonpath='{.spec.host}' -n rhacs-operator):443
-fi
 
 oc delete pipelinerun "$PIPELINE" &> /dev/null
 echo "Running pipeline $PIPELINE to build $GIT_REPO_URL @ $GIT_REVISION into $OUTPUT_IMAGE"
@@ -51,8 +47,6 @@ spec:
       value: "${OUTPUT_IMAGE}"
     - name: dockerfile
       value: "${DOCKER_FILEPATH}"
-    - name: stackrox-endpoint
-      value: "${ROX_ENDPOINT}"
   taskRunTemplate:
     serviceAccountName: rhtap-pipeline
   workspaces:
