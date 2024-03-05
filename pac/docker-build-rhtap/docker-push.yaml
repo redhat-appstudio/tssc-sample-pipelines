@@ -12,12 +12,13 @@ metadata:
     pipelinesascode.tekton.dev/task-2: "{{values.rawUrl}}/pac/tasks/buildah-rhtap.yaml"
     pipelinesascode.tekton.dev/task-3: "{{values.rawUrl}}/pac/tasks/source-build.yaml"
     pipelinesascode.tekton.dev/task-4: "{{values.rawUrl}}/pac/tasks/clair-scan.yaml"
-    pipelinesascode.tekton.dev/task-5: "{{values.rawUrl}}/pac/tasks/acs-image-check.yaml"
-    pipelinesascode.tekton.dev/task-6: "{{values.rawUrl}}/pac/tasks/acs-image-scan.yaml"
-    pipelinesascode.tekton.dev/task-7: "{{values.rawUrl}}/pac/tasks/acs-deploy-check.yaml"
-    pipelinesascode.tekton.dev/task-8: "{{values.rawUrl}}/pac/tasks/show-sbom.yaml"
-    pipelinesascode.tekton.dev/task-9: "{{values.rawUrl}}/pac/tasks/summary.yaml"
-    pipelinesascode.tekton.dev/task-10: "{{values.rawUrl}}/pac/tasks/update-deployment.yaml"
+    pipelinesascode.tekton.dev/task-5: "{{values.rawUrl}}/pac/tasks/sbom-json-check.yaml"
+    pipelinesascode.tekton.dev/task-6: "{{values.rawUrl}}/pac/tasks/acs-image-check.yaml"
+    pipelinesascode.tekton.dev/task-7: "{{values.rawUrl}}/pac/tasks/acs-image-scan.yaml"
+    pipelinesascode.tekton.dev/task-8: "{{values.rawUrl}}/pac/tasks/acs-deploy-check.yaml"
+    pipelinesascode.tekton.dev/task-9: "{{values.rawUrl}}/pac/tasks/update-deployment.yaml"
+    pipelinesascode.tekton.dev/task-10: "{{values.rawUrl}}/pac/tasks/show-sbom.yaml"
+    pipelinesascode.tekton.dev/task-11: "{{values.rawUrl}}/pac/tasks/summary.yaml"
 spec:
   params:
   - name: dockerfile
