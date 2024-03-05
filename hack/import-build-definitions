@@ -77,8 +77,8 @@ for pipeline in $OUTPUT_PIPELINES_DIR/* ;  do
       echo Unable to apply task in $VERSIONDIR
     fi 
   done 
-done
-
+done 
+bash $SCRIPTDIR/update-pipelinerun-imports
   
 
  

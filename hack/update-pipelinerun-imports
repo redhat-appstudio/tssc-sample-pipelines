@@ -1,0 +1,19 @@
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" 
+  
+PATCH=$(mktemp)
+TEMPFILE=$(mktemp)
+PAC_RUNNERS="${1:-$SCRIPTDIR/../pac/docker-build-rhtap}" 
+for pipelineruns in $PAC_RUNNERS/*.yaml;do
+    echo $pipelineruns 
+
+    pipelineRef=$(grep -v "{{" $pipelineruns | yq .spec.pipelineRef.name) 
+    bash $SCRIPTDIR/generate-annotations $SCRIPTDIR/../pac/pipelines/$pipelineRef.yaml > $PATCH
+    
+    sed  's!pipelinesascode.tekton.dev/pipeline.*!SAVE_FOR_PATCH!' $pipelineruns \
+    | sed 's!pipelinesascode.tekton.dev/task.*!!' \
+    | sed  "/SAVE_FOR_PATCH/r $PATCH" \
+    | grep -v "SAVE_FOR_PATCH" \
+    | grep "\S" >  $TEMPFILE   
+
+    cp $TEMPFILE $pipelineruns 
+done 
