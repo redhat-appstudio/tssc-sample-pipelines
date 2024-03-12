@@ -9,6 +9,8 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 if [ -z "$BUILD_DEFINITIONS" ]; then
     BUILD_DEFINITIONS="${1:-$HOME/dev/build-definitions}"
 fi
+TASKS_CATALOG_EXPORT=$(realpath $SCRIPTDIR/../tasks)
+PIPELINES_CATALOG_EXPORT=$(realpath $SCRIPTDIR/../pipelines)
 DEFAULT_EXPORT=$(realpath $SCRIPTDIR/../pac)
 if [ -z "$EXPORT_DIR" ]; then
     EXPORT_DIR="${2:-$DEFAULT_EXPORT}"
@@ -59,13 +61,26 @@ if [ -f $PIPE_FILE_OR_DIR ]; then
   fi
 
 done
+ 
+CREATE_CATALOG=false 
+rm -rf $PIPELINES_CATALOG_EXPORT 
+rm -rf $TASKS_CATALOG_EXPORT 
+if [ $CREATE_CATALOG == "true" ]; then
+  mkdir -p $PIPELINES_CATALOG_EXPORT 
+  mkdir -p $TASKS_CATALOG_EXPORT 
+fi 
 
 for pipeline in $OUTPUT_PIPELINES_DIR/* ;  do
   echo $pipeline 
   TASKS=$(yq .spec.tasks.[].taskRef.name $pipeline )  
   FINALLY=$(yq .spec.finally.[].taskRef.name $pipeline )  
   for task in $TASKS $FINALLY
-  do
+  do  
+    if [ $CREATE_CATALOG == "true" ]; then 
+      echo "Catalog "  
+      cp -r $IMPORT_TASKS_DIR/$task/ $TASKS_CATALOG_EXPORT/$task
+    fi 
+
     echo "Copy $task due to reference in $pipeline" 
     VERSIONDIR=$(ls -d $IMPORT_TASKS_DIR/$task/*/ | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n | tail -n1)
     echo $task.yaml
@@ -77,8 +92,8 @@ for pipeline in $OUTPUT_PIPELINES_DIR/* ;  do
       echo Unable to apply task in $VERSIONDIR
     fi 
   done 
-done
-
+done 
+bash $SCRIPTDIR/update-pipelinerun-imports
   
 
  

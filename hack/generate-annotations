@@ -1,6 +1,6 @@
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" 
  
-PIPELINES="${1:-$SCRIPTDIR/../pac/pipelines}" 
+pipeline="${1:-$SCRIPTDIR/../pac/pipelines/docker-build-rhtap.yaml}" 
 
 function showimports() {  
     COUNTER=0
@@ -10,7 +10,7 @@ function showimports() {
     for task in $TASKS $FINALLY
     do 
     if [ -f $SCRIPTDIR/../pac/tasks/$task.yaml ]; then
-        printf "\t\t%s\n" "pipelinesascode.tekton.dev/task-$COUNTER: \"{{values.rawUrl}}/pac/tasks/$task.yaml\""
+        printf "    %s\n" "pipelinesascode.tekton.dev/task-$COUNTER: \"{{values.rawUrl}}/pac/tasks/$task.yaml\""
         let COUNTER++
     else  
         echo "# MISSING $task "
@@ -18,10 +18,8 @@ function showimports() {
     fi 
     done
     echo 
-}
-for pipeline in $PIPELINES/*;do 
-    echo "Imports for $pipeline:"
-    pipe=$(basename $pipeline)
-    printf "\t\t%s\n" "pipelinesascode.tekton.dev/pipeline: \"{{values.rawUrl}}/pac/pipelines/$pipe\""
-    showimports $pipeline
-done 
+} 
+pipe=$(basename $pipeline)
+printf "    %s\n" "pipelinesascode.tekton.dev/pipeline: \"{{values.rawUrl}}/pac/pipelines/$pipe\""
+showimports $pipeline
+ 
