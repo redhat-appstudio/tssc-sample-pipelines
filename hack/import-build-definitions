@@ -73,8 +73,11 @@ fi
 for pipeline in $OUTPUT_PIPELINES_DIR/* ;  do
   echo $pipeline 
   TASKS=$(yq .spec.tasks.[].taskRef.name $pipeline )  
-  FINALLY=$(yq .spec.finally.[].taskRef.name $pipeline )  
-  for task in $TASKS $FINALLY
+  FINALLY=$(yq .spec.finally.[].taskRef.name $pipeline )
+  # Temporarily keep some to ensure existing templates work
+  # until they have been merged for backwards compatibilty  
+  KEEP="clair-scan sbom-json-check source-build"
+  for task in $TASKS $FINALLY $KEEP
   do  
     if [ $CREATE_CATALOG == "true" ]; then 
       echo "Catalog "  
