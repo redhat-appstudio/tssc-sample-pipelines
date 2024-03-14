@@ -92,19 +92,33 @@ EOF
       name: rhtap-pipelines-runner
     rules:
     - apiGroups:
-      - ""
+        - tekton.dev
       resources:
-      - secrets
+        - pipelineruns
       verbs:
-      - get
+        - get
     - apiGroups:
-      - security.openshift.io
-      resourceNames:
-      - rhtap-pipelines-scc
+        - tekton.dev
       resources:
-      - securitycontextconstraints
+        - taskruns
       verbs:
-      - use
+        - get
+        - list
+        - patch
+    - apiGroups:
+        - ""
+      resources:
+        - secrets
+      verbs:
+        - get
+    - apiGroups:
+        - security.openshift.io
+      resourceNames:
+        - rhtap-pipelines-scc
+      resources:
+        - securitycontextconstraints
+      verbs:
+        - use
 EOF
 }
 
