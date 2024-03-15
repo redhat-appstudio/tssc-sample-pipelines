@@ -47,6 +47,8 @@ spec:
       value: "${OUTPUT_IMAGE}"
     - name: dockerfile
       value: "${DOCKER_FILEPATH}"
+    - name: event-type
+      value: push
   taskRunTemplate:
     serviceAccountName: rhtap-pipeline
   workspaces:
