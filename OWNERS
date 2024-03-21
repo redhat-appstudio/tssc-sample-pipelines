@@ -1,0 +1,8 @@
+# See the OWNERS docs: https://go.k8s.io/owners
+approvers:
+- jduimovich
+- mmorhun
+- chmeliik
+- xinredhat
+- prietyc123
+- flacatus
