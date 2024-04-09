@@ -88,12 +88,12 @@ spec:
     - version
     command:
     - ec
-    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:1.0.alpha
+    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:0.2
     name: version
   - env:
     - name: TUF_MIRROR
       value: $(params.TUF_MIRROR)
-    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:1.0.alpha
+    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:0.2
     name: initialize-tuf
     script: |-
       set -euo pipefail
@@ -142,26 +142,26 @@ spec:
       value: /tekton-custom-certs:/etc/ssl/certs:/etc/pki/tls/certs:/system/etc/security/cacerts:$(params.SSL_CERT_DIR)
     - name: EC_CACHE
       value: "false"
-    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:1.0.alpha
+    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:0.2
     name: validate
   - args:
     - $(params.HOMEDIR)/report.yaml
     command:
     - cat
-    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:1.0.alpha
+    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:0.2
     name: report
   - args:
     - $(params.HOMEDIR)/report-json.json
     command:
     - cat
-    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:1.0.alpha
+    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:0.2
     name: report-json
   - args:
     - .
     - $(results.TEST_OUTPUT.path)
     command:
     - jq
-    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:1.0.alpha
+    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:0.2
     name: summary
   - args:
     - --argjson
@@ -173,7 +173,7 @@ spec:
     - $(results.TEST_OUTPUT.path)
     command:
     - jq
-    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:1.0.alpha
+    image: registry.redhat.io/rhtas-tech-preview/ec-rhel9:0.2
     name: assert
   - image: registry.redhat.io/openshift4/ose-cli:4.13@sha256:73df37794ffff7de1101016c23dc623e4990810390ebdabcbbfa065214352c7c
     name: annotate-task
