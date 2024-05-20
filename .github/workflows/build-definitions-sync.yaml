@@ -19,7 +19,7 @@ jobs:
       - name: Checkout build-definitions
         uses: actions/checkout@v4
         with:
-          repository: redhat-appstudio/build-definitions
+          repository: konflux-ci/build-definitions
           path: build-definitions
       - name: Synchronize build-definitions
         run: |
