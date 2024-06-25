@@ -15,7 +15,8 @@ spec:
       description: The target branch for the pull request
       name: target-branch
       type: string
-    - default: github.com/enterprise-contract/config//default
+      # See https://github.com/redhat-appstudio/tssc-sample-pipelines/tree/main/ec/policy.yaml
+    - default: github.com/redhat-appstudio/tssc-sample-pipelines//ec
       description: Enterprise Contract policy to validate against
       name: ec-policy-configuration
       type: string

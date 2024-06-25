@@ -1,0 +1,31 @@
+---
+#
+# Example usage:
+#   ec validate image \
+#     --image $IMAGE \
+#     --public-key key.pub \
+#     --policy github.com/redhat-appstudio/tssc-sample-pipelines//ec
+#
+# (Assuming this file is located at
+# https://github.com/redhat-appstudio/tssc-sample-pipelines/tree/main/ec/policy.yaml )
+#
+# See also https://github.com/enterprise-contract/config for other example
+# Enterprise Contract configs.
+#
+name: Default (v0.4)
+description: >-
+  Includes rules for levels 1, 2 & 3 of SLSA v0.1. (Pinned to the
+  release-v0.4 branch for stability with ec version v0.4.)
+sources:
+  - name: Default
+    policy:
+      - github.com/enterprise-contract/ec-policies//policy/lib?ref=release-v0.4
+      - github.com/enterprise-contract/ec-policies//policy/release?ref=release-v0.4
+    data: []
+    config:
+        # Other rules from the ec-policies repo may be included here
+        # Unwanted rules can be excluded. For more details see
+        # https://enterprisecontract.dev/docs/ec-cli/main/configuration.html
+      include:
+        - '@slsa3'
+      exclude: []
