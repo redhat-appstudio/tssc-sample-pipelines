@@ -96,6 +96,8 @@ spec:
     name: commit
   - description: The precise URL that was fetched by this Task.
     name: url
+  - description: The commit timestamp of the checkout
+    name: commit-timestamp
   steps:
   - name: clone
     env:
@@ -143,7 +145,7 @@ spec:
       value: $(workspaces.basic-auth.bound)
     - name: WORKSPACE_BASIC_AUTH_DIRECTORY_PATH
       value: $(workspaces.basic-auth.path)
-    image: registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8:v1.8.2-8@sha256:a538c423e7a11aae6ae582a411fdb090936458075f99af4ce5add038bb6983e8
+    image: quay.io/konflux-ci/git-clone@sha256:4e53ebd9242f05ca55bfc8d58b3363d8b9d9bc3ab439d9ab76cdbdf5b1fd42d9
     computeResources: {}
     securityContext:
       runAsUser: 0
@@ -235,6 +237,7 @@ spec:
       fi
       printf "%s" "${RESULT_SHA}" > "$(results.commit.path)"
       printf "%s" "${PARAM_URL}" > "$(results.url.path)"
+      printf "%s" "$(git log -1 --pretty=%ct)" > "$(results.commit-timestamp.path)"
 
       if [ "${PARAM_FETCH_TAGS}" = "true" ] ; then
         echo "Fetching tags"
@@ -242,10 +245,9 @@ spec:
       fi
 
   - name: symlink-check
-    image: registry.redhat.io/ubi9:9.2-696@sha256:089bd3b82a78ac45c0eed231bb58bfb43bfcd0560d9bba240fc6355502c92976
+    image: quay.io/konflux-ci/git-clone@sha256:4e53ebd9242f05ca55bfc8d58b3363d8b9d9bc3ab439d9ab76cdbdf5b1fd42d9
     # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
     # the cluster will set imagePullPolicy to IfNotPresent
-    # also per direction from Ralph Bean, we want to use image digest based tags to use a cue to automation like dependabot or renovatebot to periodially submit pull requests that update the digest as new images are released.
     env:
     - name: PARAM_ENABLE_SYMLINK_CHECK
       value: $(params.enableSymlinkCheck)
@@ -263,7 +265,7 @@ spec:
         FOUND_SYMLINK_POINTING_OUTSIDE_OF_REPO=false
         while read symlink
         do
-          target=$(readlink -f "$symlink")
+          target=$(readlink -m "$symlink")
           if ! [[ "$target" =~ ^$CHECKOUT_DIR ]]; then
             echo "The cloned repository contains symlink pointing outside of the cloned repository: $symlink"
             FOUND_SYMLINK_POINTING_OUTSIDE_OF_REPO=true
