@@ -134,6 +134,8 @@ spec:
       value: sboms
     - name: TRUSTIFICATION_SECRET_NAME
       value: $(params.trustification-secret-name)
+    - name: FAIL_IF_TRUSTIFICATION_NOT_CONFIGURED
+      value: 'false'
     runAfter:
     - download-sboms
     taskRef:
