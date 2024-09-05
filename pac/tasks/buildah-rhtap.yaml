@@ -43,7 +43,7 @@ spec:
   results:
   - description: Digest of the image just built
     name: IMAGE_DIGEST
-  - description: Image repository where the built image was pushed
+  - description: Image repository and tag where the built image was pushed
     name: IMAGE_URL
   - description: Digests of the base images used for build
     name: BASE_IMAGES_DIGESTS
@@ -137,7 +137,7 @@ spec:
       name: tmpfiles
 
   - name: merge-sboms
-    image: registry.access.redhat.com/ubi8/python-311@sha256:41684602c32177eec39ca1b46a295ed21314c7f58261a3e82492cb67f44488b4
+    image: registry.access.redhat.com/ubi8/python-311@sha256:6cc79822da3610cb30e5fa1f5afebe2b36c69db3f03841638139a54b3c307e42
     env:
       - name: RESULT_PATH
         value: $(results.SBOM_BLOB_URL.path)
