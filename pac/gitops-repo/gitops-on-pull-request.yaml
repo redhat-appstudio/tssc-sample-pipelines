@@ -1,10 +1,10 @@
 apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
-  name: {{ values.name }}-gitops-on-pull-request
+  name: "{{values.name}}-gitops-on-pull-request"
   annotations:
     pipelinesascode.tekton.dev/on-event: "[pull_request]"
-    pipelinesascode.tekton.dev/on-target-branch: "[{{ values.defaultBranch }}]" 
+    pipelinesascode.tekton.dev/on-target-branch: "[{{ values.defaultBranch }}]"
     pipelinesascode.tekton.dev/pipeline: "{{values.rawUrl}}/pac/pipelines/gitops-pull-request-rhtap.yaml"
     pipelinesascode.tekton.dev/task-0: "{{values.rawUrl}}/pac/tasks/git-clone.yaml"
     pipelinesascode.tekton.dev/task-1: "{{values.rawUrl}}/pac/tasks/gather-deploy-images.yaml"
@@ -14,14 +14,14 @@ metadata:
     pipelinesascode.tekton.dev/task-5: "{{values.rawUrl}}/pac/tasks/upload-sbom-to-trustification.yaml"
 spec:
   params:
-  - name: git-url
-    value: '{{repo_url}}'   
-  - name: revision
-    value: '{{revision}}'     
-  - name: target-branch
-    value: '{{target_branch}}'
-  - name: fail-if-trustification-not-configured
-    value: 'false'
+    - name: git-url
+      value: '{{repo_url}}'
+    - name: revision
+      value: '{{revision}}'
+    - name: target-branch
+      value: '{{target_branch}}'
+    - name: fail-if-trustification-not-configured
+      value: 'false'
   pipelineRef:
     name: gitops-pull-request
   workspaces:
@@ -32,7 +32,7 @@ spec:
       volumeClaimTemplate:
         spec:
           accessModes:
-          - ReadWriteOnce
+            - ReadWriteOnce
           resources:
             requests:
               storage: 1Gi
