@@ -25,7 +25,7 @@ spec:
 
   steps:
     - name: init
-      image: registry.access.redhat.com/ubi9/skopeo:9.4-14.1728984400@sha256:891ee232a9319ed0f675c318f9605422bde7436328e7faec7dc896a206a78e54
+      image: registry.access.redhat.com/ubi9/skopeo:9.5-1734513455@sha256:ed14fc6a175289cc72ffb122ebc02db0e7f448a2ed6169472347aaeb0c12c373
       env:
         - name: IMAGE_URL
           value: $(params.image-url)
@@ -41,7 +41,7 @@ spec:
         echo "Determine if Image Already Exists"
         # Build the image when rebuild is set to true or image does not exist
         # The image check comes last to avoid unnecessary, slow API calls
-        if [ "$REBUILD" == "true" ] || [ "$SKIP_CHECKS" == "false" ] || ! skopeo inspect --raw docker://$IMAGE_URL &>/dev/null; then
+        if [ "$REBUILD" == "true" ] || [ "$SKIP_CHECKS" == "false" ] || ! skopeo inspect --no-tags --raw "docker://$IMAGE_URL" &>/dev/null; then
           echo -n "true" > $(results.build.path)
         else
           echo -n "false" > $(results.build.path)
