@@ -103,7 +103,9 @@ spec:
       mkdir -p rhtap
       touch rhtap/env.sh
       # TODO: In case the env.sh file is missing, define expected env variables.
-      export CUSTOM_ROOT_CA
+      export CUSTOM_ROOT_CA=''
+      echo "Here's the env:"
+      env
 
       /work/rhtap/init.sh
 
