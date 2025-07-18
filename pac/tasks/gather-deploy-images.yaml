@@ -28,7 +28,8 @@ spec:
         When there are no images to verify, this is an empty string.
   steps:
   - name: get-images-per-env
-    image: quay.io/konflux-ci/appstudio-utils:8f9f933d7b0b57e37b96fd34698c92c785cfeadc@sha256:924eb1680b6cda674e902579135a06b2c6683c3cc1082bbdc159a4ce5ea9f4df
+    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    imagePullPolicy: Always
     workingDir: $(workspaces.source.path)/source
     env:
       - name: TARGET_BRANCH

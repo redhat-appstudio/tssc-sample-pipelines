@@ -27,7 +27,8 @@ spec:
       optional: true
   steps:
     - name: appstudio-summary
-      image: quay.io/konflux-ci/appstudio-utils:8f9f933d7b0b57e37b96fd34698c92c785cfeadc@sha256:924eb1680b6cda674e902579135a06b2c6683c3cc1082bbdc159a4ce5ea9f4df
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      imagePullPolicy: Always
       # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
       # the cluster will set imagePullPolicy to IfNotPresent
       env:

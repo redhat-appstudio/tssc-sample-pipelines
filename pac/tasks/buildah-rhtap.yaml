@@ -65,7 +65,13 @@ spec:
       value: $(params.BUILD_ARGS_FILE)
   steps:
   - name: build
-    image: registry.access.redhat.com/ubi9/buildah@sha256:69a75a48410c78f7d794f6cb94a17b90ee316bd9e94a3d64a2018194a859c467
+    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    imagePullPolicy: Always
+    env:
+      - name: _BUILDAH_STARTED_IN_USERNS
+        value: ""
+      - name: BUILDAH_ISOLATION
+        value: chroot
     args:
       - $(params.BUILD_ARGS[*])
     script: |
@@ -137,7 +143,8 @@ spec:
     workingDir: $(workspaces.source.path)
 
   - name: generate-sboms
-    image: registry.redhat.io/rh-syft-tech-preview/syft-rhel9:1.19.0@sha256:070ecb89de5104bb64fbf399a991a975e7d4d7e0cea0f7beb1e591b5591991c8
+    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    imagePullPolicy: Always
     # Respect Syft configuration if the user has it in the root of their repository
     # (need to set the workdir, see https://github.com/anchore/syft/issues/2465)
     workingDir: $(workspaces.source.path)/source
@@ -151,7 +158,8 @@ spec:
       name: tmpfiles
 
   - name: merge-sboms
-    image: registry.access.redhat.com/ubi8/python-311@sha256:9ed81f40078524fed30c4447d2aff3952fdb5ed164430ee3cc5465a7b13ffa47
+    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    imagePullPolicy: Always
     env:
       - name: RESULT_PATH
         value: $(results.SBOM_BLOB_URL.path)
@@ -219,7 +227,8 @@ spec:
     workingDir: /tmp/files
 
   - name: upload-sbom
-    image: registry.redhat.io/rhtas/cosign-rhel9:e28487714294d5c205e95da843e86fd28e4d3355d6a4d328a872c62ed0cf5f93@sha256:6fa39582a3d62a2aa5404397bb638fdd0960f9392db659d033d7bacf70bddfb1
+    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    imagePullPolicy: Always
     command: [cosign]
     args:
       - attach

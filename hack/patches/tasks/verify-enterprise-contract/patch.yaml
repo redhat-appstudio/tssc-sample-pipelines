@@ -2,7 +2,8 @@
     path: /spec/steps/-
     value:
       name: annotate-task
-      image: registry.redhat.io/openshift4/ose-cli:4.13@sha256:73df37794ffff7de1101016c23dc623e4990810390ebdabcbbfa065214352c7c
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      imagePullPolicy: Always
       script: |
         #!/usr/bin/env bash
         echo "verify-enterprise-contract $(context.taskRun.name)"

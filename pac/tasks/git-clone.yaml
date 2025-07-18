@@ -170,6 +170,9 @@ spec:
       value: $(workspaces.basic-auth.bound)
     - name: WORKSPACE_BASIC_AUTH_DIRECTORY_PATH
       value: $(workspaces.basic-auth.path)
+    # TODO: /ko-app/git-init is not in the runner image.
+    # image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    # imagePullPolicy: Always
     image: quay.io/konflux-ci/git-clone@sha256:4e53ebd9242f05ca55bfc8d58b3363d8b9d9bc3ab439d9ab76cdbdf5b1fd42d9
     computeResources: {}
     securityContext:
@@ -318,7 +321,8 @@ spec:
       fi
 
   - name: symlink-check
-    image: quay.io/konflux-ci/git-clone@sha256:4e53ebd9242f05ca55bfc8d58b3363d8b9d9bc3ab439d9ab76cdbdf5b1fd42d9
+    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    imagePullPolicy: Always
     # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
     # the cluster will set imagePullPolicy to IfNotPresent
     env:

@@ -81,7 +81,8 @@ spec:
       mountPath: /run/secrets/trustification
   steps:
   - name: gather-sboms
-    image: quay.io/konflux-ci/appstudio-utils:8f9f933d7b0b57e37b96fd34698c92c785cfeadc@sha256:924eb1680b6cda674e902579135a06b2c6683c3cc1082bbdc159a4ce5ea9f4df
+    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    imagePullPolicy: Always
     script: |
       #!/usr/bin/env bash
       set -o errexit -o nounset -o pipefail
@@ -141,7 +142,8 @@ spec:
 
   # Needs syft, which is in a different image => has to be a separate step
   - name: convert-sboms-if-needed
-    image: registry.redhat.io/rh-syft-tech-preview/syft-rhel9:1.19.0@sha256:070ecb89de5104bb64fbf399a991a975e7d4d7e0cea0f7beb1e591b5591991c8
+    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    imagePullPolicy: Always
     script: |
       #!/usr/bin/env bash
       set -o errexit -o nounset -o pipefail
@@ -166,7 +168,8 @@ spec:
       done
 
   - name: upload-sboms
-    image: quay.io/konflux-ci/appstudio-utils:8f9f933d7b0b57e37b96fd34698c92c785cfeadc@sha256:924eb1680b6cda674e902579135a06b2c6683c3cc1082bbdc159a4ce5ea9f4df
+    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    imagePullPolicy: Always
     volumeMounts:
       - name: shared-folder
         mountPath: /steps-shared-folder
@@ -266,7 +269,8 @@ spec:
       done
 
   - name: report
-    image: quay.io/konflux-ci/appstudio-utils:8f9f933d7b0b57e37b96fd34698c92c785cfeadc@sha256:924eb1680b6cda674e902579135a06b2c6683c3cc1082bbdc159a4ce5ea9f4df
+    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    imagePullPolicy: Always
     volumeMounts:
       - name: shared-folder
         mountPath: /steps-shared-folder
