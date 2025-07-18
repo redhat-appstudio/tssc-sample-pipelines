@@ -28,10 +28,6 @@ spec:
     description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
     name: TLSVERIFY
     type: string
-  - name: BUILD_ARGS
-    description: Array of --build-arg values ("arg=value" strings)
-    type: array
-    default: []
   - name: BUILD_ARGS_FILE
     description: Path to a file with build arguments, see https://www.mankier.com/1/buildah-build#--build-arg-file
     type: string
@@ -67,6 +63,8 @@ spec:
       value: $(params.TLSVERIFY)
     - name: BUILD_ARGS_FILE
       value: $(params.BUILD_ARGS_FILE)
+    - name: CUSTOM_ROOT_CA
+      value: /tekton-custom-certs/ca-bundle.crt
     # TODO: These are requried by the init script but are not actually used by the buildah-rhtap.sh script
     - name: COSIGN_SECRET_PASSWORD
       value: ignore
@@ -102,9 +100,6 @@ spec:
       # Workaround to make the init script work
       mkdir -p rhtap
       touch rhtap/env.sh
-
-      # TODO: In case the env.sh file is missing, define expected env variables.
-      export CUSTOM_ROOT_CA=''
 
       /work/rhtap/init.sh
 
@@ -173,37 +168,25 @@ spec:
 
       /work/rhtap/buildah-rhtap.sh
 
-# Step: init
-# Results: /work/results/init
-# /work/rhtap/common.sh: line 91: /work/rhtap/env.sh: No such file or directory
-# ENV vars:
-# Error: IMAGE_URL missing definition.
-# Error: IMAGE missing definition.
-# Error: COSIGN_SECRET_PASSWORD missing definition.
-# Error: COSIGN_SECRET_KEY missing definition.
-# Error: COSIGN_PUBLIC_KEY missing definition.
-# Error: DISABLE_ACS missing definition.
-# Error: ROX_CENTRAL_ENDPOINT missing definition.
-# Error: ROX_API_TOKEN missing definition.
-# Error: GITOPS_AUTH_PASSWORD missing definition.
-# Error: POLICY_CONFIGURATION missing definition.
-# Error: REKOR_HOST missing definition.
-# Error: IGNORE_REKOR missing definition.
-# Error: INFO missing definition.
-# Error: STRICT missing definition.
-# Error: EFFECTIVE_TIME missing definition.
-# Error: HOMEDIR missing definition.
-# Binaries:
-# OK: git in /usr/bin/git
-# OK: curl in /usr/bin/curl
-# OK: jq in /usr/bin/jq
-# OK: yq in /usr/bin/yq
-# OK: buildah in /usr/bin/buildah
-# OK: syft in /usr/bin/syft
-# OK: cosign in /usr/bin/cosign
-# OK: ec in /usr/bin/ec
-# OK: python3 in /usr/bin/python3
-# ---------- ERROR -----------------
-# Errors in configuration above, fix and rerun
-# Dependency Error  = 1
-# Fatal Error code for  = 1
+      ls -la ./results/buildah-rhtap
+      cat ./results/buildah-rhtap/*
+
+    securityContext:
+      capabilities:
+        add:
+          # this is needed so that buildah can write to the mounted /var/lib/containers directory
+          - SETFCAP
+    volumeMounts:
+    - mountPath: /var/lib/containers
+      name: varlibcontainers
+    - mountPath: /tmp/files
+      name: tmpfiles
+
+  volumes:
+  - emptyDir: {}
+    name: varlibcontainers
+  - emptyDir: {}
+    name: tmpfiles
+  workspaces:
+  - name: source
+    description: Workspace containing the source code to build.
