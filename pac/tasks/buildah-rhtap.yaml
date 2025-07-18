@@ -165,7 +165,11 @@ spec:
       export IMAGE_REGISTRY_USER="$(echo -n "${creds}" | cut -d: -f1)"
       export IMAGE_REGISTRY_PASSWORD="$(echo -n "${creds}" | cut -d: -f2-)"
 
+      echo "pwd:"
       pwd
+
+      echo "ls -la:"
+      ls -la .
 
       /work/rhtap/buildah-rhtap.sh
 
