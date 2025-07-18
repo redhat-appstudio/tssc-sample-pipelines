@@ -69,31 +69,31 @@ spec:
       value: $(params.BUILD_ARGS_FILE)
     # TODO: These are requried by the init script but are not actually used by the buildah-rhtap.sh script
     - name: COSIGN_SECRET_PASSWORD
-      value: none
+      value: ignore
     - name: COSIGN_SECRET_KEY
-      value: none
+      value: ignore
     - name: COSIGN_PUBLIC_KEY
-      value: none
+      value: ignore
     - name: DISABLE_ACS
-      value: none
+      value: ignore
     - name: ROX_CENTRAL_ENDPOINT
-      value: none
+      value: ignore
     - name: ROX_API_TOKEN
-      value: none
+      value: ignore
     - name: GITOPS_AUTH_PASSWORD
-      value: none
+      value: ignore
     - name: POLICY_CONFIGURATION
-      value: none
+      value: ignore
     - name: REKOR_HOST
-      value: none
+      value: ignore
     - name: IGNORE_REKOR
-      value: none
+      value: ignore
     - name: INFO
-      value: none
+      value: ignore
     - name: STRICT
-      value: none
+      value: ignore
     - name: EFFECTIVE_TIME
-      value: none
+      value: ignore
     workingDir: $(workspaces.source.path)
   steps:
   - name: build
