@@ -102,6 +102,8 @@ spec:
       # Workaround to make the init script work
       mkdir -p rhtap
       touch rhtap/env.sh
+      # TODO: In case the env.sh file is missing, define expected env variables.
+      export CUSTOM_ROOT_CA
 
       /work/rhtap/init.sh
 
