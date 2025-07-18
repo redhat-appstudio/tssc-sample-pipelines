@@ -94,7 +94,7 @@ spec:
       value: ignore
     - name: EFFECTIVE_TIME
       value: ignore
-    workingDir: $(workspaces.source.path)
+    workingDir: "$(workspaces.source.path)/source"
   steps:
   - name: build
     image: quay.io/redhat-appstudio/rhtap-task-runner:latest
