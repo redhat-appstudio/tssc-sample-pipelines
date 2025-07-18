@@ -102,12 +102,68 @@ spec:
       # Workaround to make the init script work
       mkdir -p rhtap
       touch rhtap/env.sh
+
       # TODO: In case the env.sh file is missing, define expected env variables.
       export CUSTOM_ROOT_CA=''
-      echo "Here's the env:"
-      env
 
       /work/rhtap/init.sh
+
+      # TODO: In Tekton, the OCI registry authentication is automatically made available via the
+      # secrets linked to the ServiceAccount. We should use that if the expected env variables are
+      # not set. This is a workarond in lieu of that.
+      get_container_auth() {
+        # https://man.archlinux.org/man/containers-auth.json.5
+
+        local image=$1
+
+        local runtime_dir="${XDG_RUNTIME_DIR:-}"
+        local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+        if [[ -n "$runtime_dir" ]]; then
+            default_authfile="${runtime_dir}/containers/auth.json"
+        else
+            default_authfile="$config_home/containers/auth.json"
+        fi
+
+        local maybe_auth_files=(
+            "$default_authfile"
+            "$config_home/containers/auth.json"
+            "$HOME/.docker/config.json"
+            "$HOME/.dockercfg"
+        )
+        local auth_files=()
+        for file in "${maybe_auth_files[@]}"; do
+            if [[ -r "$file" ]]; then
+                auth_files+=("$file")
+            fi
+        done
+
+        # registry.com/namespace/repo@sha256:digest -> registry.com/namespace/repo
+        local auth_key=${image%@*}
+
+        while true; do
+            for auth_file in "${auth_files[@]}"; do
+                if jq -r -e --arg key "$auth_key" '.auths[$key].auth // empty' "$auth_file"; then
+                    echo "Found auth for $auth_key in $auth_file" >&2
+                    return 0
+                fi
+            done
+
+            # Try less specific key, e.g. registry.com/namespace/repo -> registry.com/namespace
+            local new_key=${auth_key%/*}
+            if [[ "$new_key" = "$auth_key" ]]; then
+                # Already tried all possible keys, no auth found
+                echo "No auth found for $auth_key" >&2
+                return 1
+            fi
+
+            auth_key=$new_key
+        done
+
+      }
+
+      creds="$(get_container_auth quay.io/lucarval/yolo:foobar | base64 -d)"
+      export IMAGE_REGISTRY_USER="$(echo -n "${creds}" | cut -d: -f1)"
+      export IMAGE_REGISTRY_PASSWORD="$(echo -n "${creds}" | cut -d: -f2-)"
 
       /work/rhtap/buildah-rhtap.sh
 
