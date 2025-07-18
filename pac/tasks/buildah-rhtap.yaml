@@ -51,6 +51,8 @@ spec:
     name: SBOM_BLOB_URL
   stepTemplate:
     env:
+    - name: HOMEDIR
+      value: /home/tekton
     - name: STORAGE_DRIVER
       value: $(params.STORAGE_DRIVER)
     - name: CONTEXT
@@ -59,10 +61,39 @@ spec:
       value: $(params.DOCKERFILE)
     - name: IMAGE
       value: $(params.IMAGE)
+    - name: IMAGE_URL
+      value: $(params.IMAGE)
     - name: TLSVERIFY
       value: $(params.TLSVERIFY)
     - name: BUILD_ARGS_FILE
       value: $(params.BUILD_ARGS_FILE)
+    # TODO: These are requried by the init script but are not actually used by the buildah-rhtap.sh script
+    - name: COSIGN_SECRET_PASSWORD
+      value: none
+    - name: COSIGN_SECRET_KEY
+      value: none
+    - name: COSIGN_PUBLIC_KEY
+      value: none
+    - name: DISABLE_ACS
+      value: none
+    - name: ROX_CENTRAL_ENDPOINT
+      value: none
+    - name: ROX_API_TOKEN
+      value: none
+    - name: GITOPS_AUTH_PASSWORD
+      value: none
+    - name: POLICY_CONFIGURATION
+      value: none
+    - name: REKOR_HOST
+      value: none
+    - name: IGNORE_REKOR
+      value: none
+    - name: INFO
+      value: none
+    - name: STRICT
+      value: none
+    - name: EFFECTIVE_TIME
+      value: none
     workingDir: $(workspaces.source.path)
   steps:
   - name: build
