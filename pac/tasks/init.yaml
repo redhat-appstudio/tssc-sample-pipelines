@@ -25,7 +25,7 @@ spec:
 
   steps:
     - name: init
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/lucarval/rhtap-task-runner:latest
       imagePullPolicy: Always
       computeResources:
         limits:

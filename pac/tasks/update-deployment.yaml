@@ -21,7 +21,7 @@ spec:
       optional: true
   steps:
     - name: patch-gitops
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/lucarval/rhtap-task-runner:latest
       imagePullPolicy: Always
       env:
         - name: PARAM_GITOPS_REPO_URL

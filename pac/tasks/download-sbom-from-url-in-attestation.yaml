@@ -95,7 +95,7 @@ spec:
       value: /tekton/home
   steps:
   - name: download-attestations
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     script: |
       #!/usr/bin/env bash
@@ -138,7 +138,7 @@ spec:
       done
 
   - name: download-sboms
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     script: |
       #!/usr/bin/env bash

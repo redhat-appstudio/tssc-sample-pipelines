@@ -81,7 +81,7 @@ spec:
       mountPath: /run/secrets/trustification
   steps:
   - name: gather-sboms
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     script: |
       #!/usr/bin/env bash
@@ -142,7 +142,7 @@ spec:
 
   # Needs syft, which is in a different image => has to be a separate step
   - name: convert-sboms-if-needed
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     script: |
       #!/usr/bin/env bash
@@ -168,7 +168,7 @@ spec:
       done
 
   - name: upload-sboms
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     volumeMounts:
       - name: shared-folder
@@ -269,7 +269,7 @@ spec:
       done
 
   - name: report
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     volumeMounts:
       - name: shared-folder

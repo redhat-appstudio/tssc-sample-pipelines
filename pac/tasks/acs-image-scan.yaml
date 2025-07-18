@@ -49,7 +49,7 @@ spec:
         sizeLimit: 50Mi
   steps:
     - name: annotate-task
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/lucarval/rhtap-task-runner:latest
       imagePullPolicy: Always
       script: |
         #!/usr/bin/env bash
@@ -61,7 +61,7 @@ spec:
         oc annotate taskrun $(context.taskRun.name) task.output.location=logs
 
     - name: rox-image-scan
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/lucarval/rhtap-task-runner:latest
       imagePullPolicy: Always
       volumeMounts:
         - name: rox-secret
@@ -173,7 +173,7 @@ spec:
         set_test_output_result SUCCESS "$note"
 
     - name: report
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/lucarval/rhtap-task-runner:latest
       imagePullPolicy: Always
       volumeMounts:
         - name: shared-folder

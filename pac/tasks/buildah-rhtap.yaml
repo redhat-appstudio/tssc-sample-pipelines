@@ -65,7 +65,7 @@ spec:
       value: $(params.BUILD_ARGS_FILE)
   steps:
   - name: build
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     env:
       - name: _BUILDAH_STARTED_IN_USERNS
@@ -143,7 +143,7 @@ spec:
     workingDir: $(workspaces.source.path)
 
   - name: generate-sboms
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     # Respect Syft configuration if the user has it in the root of their repository
     # (need to set the workdir, see https://github.com/anchore/syft/issues/2465)
@@ -158,7 +158,7 @@ spec:
       name: tmpfiles
 
   - name: merge-sboms
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     env:
       - name: RESULT_PATH
@@ -227,7 +227,7 @@ spec:
     workingDir: /tmp/files
 
   - name: upload-sbom
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     command: [cosign]
     args:

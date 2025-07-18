@@ -28,7 +28,7 @@ spec:
         When there are no images to verify, this is an empty string.
   steps:
   - name: get-images-per-env
-    image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+    image: quay.io/lucarval/rhtap-task-runner:latest
     imagePullPolicy: Always
     workingDir: $(workspaces.source.path)/source
     env:
