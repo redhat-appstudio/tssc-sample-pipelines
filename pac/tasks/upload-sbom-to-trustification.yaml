@@ -55,6 +55,10 @@ spec:
       secret:
         secretName: $(params.TRUSTIFICATION_SECRET_NAME)
         optional: true
+    - name: kube-root-ca-crt
+      configMap:
+        name: kube-root-ca.crt
+        optional: true
     - name: shared-folder
       emptyDir:
         medium: Memory
@@ -76,6 +80,9 @@ spec:
     volumeMounts:
       - name: trustification-secret
         mountPath: /run/secrets/trustification
+      - name: kube-root-ca-crt
+        mountPath: /run/secrets/kube-root-ca-crt
+        readOnly: true
   steps:
     - name: gather-sboms
       image: quay.io/redhat-appstudio/rhtap-task-runner:latest
@@ -177,6 +184,15 @@ spec:
           cp -vf $ca_bundle /etc/pki/ca-trust/source/anchors
           update-ca-trust
         fi
+
+        kube_root_ca_crt=/run/secrets/kube-root-ca-crt/ca.crt
+        if [ -f "$kube_root_ca_crt" ]; then
+          echo "INFO: Using mounted kube-root-ca-crt: $kube_root_ca_crt"
+          cp -vf $kube_root_ca_crt /etc/pki/ca-trust/source/anchors
+          update-ca-trust
+        fi
+
+        unset SSL_CERT_DIR
 
         shopt -s nullglob
         sboms_to_upload=("$WORKDIR"/*.json)
