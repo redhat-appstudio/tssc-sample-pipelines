@@ -42,7 +42,7 @@ spec:
         sizeLimit: 50Mi
   steps:
     - name: annotate-task
-      image: registry.redhat.io/openshift4/ose-cli:4.13@sha256:73df37794ffff7de1101016c23dc623e4990810390ebdabcbbfa065214352c7c
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       script: |
         #!/usr/bin/env bash
         echo "acs-image-check $(context.taskRun.name)"
@@ -50,8 +50,9 @@ spec:
         oc annotate taskrun $(context.taskRun.name) task.results.type=roxctl-image-check
         oc annotate taskrun $(context.taskRun.name) task.results.container=step-report
         oc annotate taskrun $(context.taskRun.name) task.output.location=logs
+      imagePullPolicy: Always
     - name: rox-image-check
-      image: registry.access.redhat.com/ubi8-minimal@sha256:8075621ed734d32d91faba9205bbbf310fc579eb3920ec292b2c67980e4dd51b
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       volumeMounts:
         - name: rox-secret
           mountPath: /rox-secret
@@ -126,8 +127,9 @@ spec:
         if [ "$ROXCTL_CHECK_STATUS" -ne 0 ]; then
           exit 3
         fi
+      imagePullPolicy: Always
     - name: report
-      image: registry.access.redhat.com/ubi8-minimal@sha256:8075621ed734d32d91faba9205bbbf310fc579eb3920ec292b2c67980e4dd51b
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       volumeMounts:
         - name: shared-folder
           mountPath: /steps-shared-folder
@@ -136,8 +138,9 @@ spec:
         set -euo pipefail
 
         cat /steps-shared-folder/acs-image-check.json
+      imagePullPolicy: Always
     - name: fail-if-check-failed
-      image: quay.io/konflux-ci/appstudio-utils:1610c1fc4cfc9c9053dbefc1146904a4df6659ef@sha256:90ac97b811073cb99a23232c15a08082b586c702b85da6200cf54ef505e3c50c
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       volumeMounts:
         - name: shared-folder
           mountPath: /steps-shared-folder
@@ -182,3 +185,4 @@ spec:
         fi
 
         echo "No errors occurred"
+      imagePullPolicy: Always

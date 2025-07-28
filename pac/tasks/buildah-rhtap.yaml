@@ -63,9 +63,13 @@ spec:
         value: $(params.TLSVERIFY)
       - name: BUILD_ARGS_FILE
         value: $(params.BUILD_ARGS_FILE)
+      - name: _BUILDAH_STARTED_IN_USERNS
+        value: ""
+      - name: BUILDAH_ISOLATION
+        value: chroot
   steps:
     - name: build
-      image: registry.access.redhat.com/ubi9/buildah@sha256:9cbe13fde4c32fd8ddc45c70fdbc2d1d9400e9e5f30993131d001adee0559d00
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       args:
         - $(params.BUILD_ARGS[*])
       script: |
@@ -135,8 +139,9 @@ spec:
         - mountPath: /tmp/files
           name: tmpfiles
       workingDir: $(workspaces.source.path)
+      imagePullPolicy: Always
     - name: generate-sboms
-      image: registry.redhat.io/rh-syft-tech-preview/syft-rhel9:1.19.0@sha256:070ecb89de5104bb64fbf399a991a975e7d4d7e0cea0f7beb1e591b5591991c8
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       # Respect Syft configuration if the user has it in the root of their repository
       # (need to set the workdir, see https://github.com/anchore/syft/issues/2465)
       workingDir: $(workspaces.source.path)/source
@@ -148,8 +153,9 @@ spec:
           name: varlibcontainers
         - mountPath: /tmp/files
           name: tmpfiles
+      imagePullPolicy: Always
     - name: merge-sboms
-      image: registry.access.redhat.com/ubi8/python-311@sha256:476762482c8f204dd9624881653cdca9827c94d16e0d74eb5f79baa4b7a18979
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       env:
         - name: RESULT_PATH
           value: $(results.SBOM_BLOB_URL.path)
@@ -215,8 +221,9 @@ spec:
         - mountPath: /tmp/files
           name: tmpfiles
       workingDir: /tmp/files
+      imagePullPolicy: Always
     - name: upload-sbom
-      image: registry.redhat.io/rhtas/cosign-rhel9:e28487714294d5c205e95da843e86fd28e4d3355d6a4d328a872c62ed0cf5f93@sha256:6fa39582a3d62a2aa5404397bb638fdd0960f9392db659d033d7bacf70bddfb1
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       command:
         - cosign
       args:
@@ -231,6 +238,7 @@ spec:
         - mountPath: /tmp/files
           name: tmpfiles
       workingDir: /tmp/files
+      imagePullPolicy: Always
   volumes:
     - emptyDir: {}
       name: varlibcontainers

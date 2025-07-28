@@ -169,7 +169,7 @@ spec:
           value: $(workspaces.basic-auth.bound)
         - name: WORKSPACE_BASIC_AUTH_DIRECTORY_PATH
           value: $(workspaces.basic-auth.path)
-      image: quay.io/konflux-ci/git-clone@sha256:4e53ebd9242f05ca55bfc8d58b3363d8b9d9bc3ab439d9ab76cdbdf5b1fd42d9
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       computeResources: {}
       securityContext:
         runAsUser: 0
@@ -314,8 +314,9 @@ spec:
             git fetch --tags
           fi
         fi
+      imagePullPolicy: Always
     - name: symlink-check
-      image: quay.io/konflux-ci/git-clone@sha256:4e53ebd9242f05ca55bfc8d58b3363d8b9d9bc3ab439d9ab76cdbdf5b1fd42d9
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
       # the cluster will set imagePullPolicy to IfNotPresent
       env:
@@ -350,6 +351,7 @@ spec:
           echo "Running symlink check"
           check_symlinks
         fi
+      imagePullPolicy: Always
   workspaces:
     - description: The git repo will be cloned onto the volume backing this Workspace.
       name: output

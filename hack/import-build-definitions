@@ -70,6 +70,8 @@ if [ $CREATE_CATALOG == "true" ]; then
   mkdir -p $TASKS_CATALOG_EXPORT
 fi
 
+RUNNER_IMAGE='quay.io/redhat-appstudio/rhtap-task-runner:latest'
+
 for pipeline in $OUTPUT_PIPELINES_DIR/* ;  do
   echo
   echo $pipeline
@@ -96,6 +98,27 @@ for pipeline in $OUTPUT_PIPELINES_DIR/* ;  do
     else
       echo Unable to apply task in $VERSIONDIR
     fi
+
+    # Change all the Tasks to use the RHADS-ssc runner image. The image reference is by tag which
+    # helps pushing out fixes. For this reason, the image pull policy is also configured to always
+    # check for the availability of a new image.
+    yq -i \
+        '.spec.steps[] *= {"image": "'${RUNNER_IMAGE}'","imagePullPolicy":"Always"}' \
+        "${OUTPUT_TASKS_DIR}/${task}.yaml"
+
+    # To run buildah within a container, we need to set a couple of environment variables to get
+    # around certain permission restrictions. These are the same ones that are set on the official
+    # Red Hat buildah image, as seen in their Dockerfile:
+    # https://catalog.redhat.com/software/containers/ubi10/buildah/673c73f6d9b2c90f6205aeb3?container-tabs=dockerfile
+    if [ "$task" == 'buildah-rhtap' ]; then
+        yq -i \
+            '.spec.stepTemplate.env += [
+                {"name":"_BUILDAH_STARTED_IN_USERNS","value":""},
+                {"name":"BUILDAH_ISOLATION","value":"chroot"
+            }]' \
+            "${OUTPUT_TASKS_DIR}/${task}.yaml"
+    fi
+
   done
 done
 

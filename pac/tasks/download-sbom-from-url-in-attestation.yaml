@@ -84,7 +84,7 @@ spec:
         value: /tekton/home
   steps:
     - name: download-attestations
-      image: quay.io/konflux-ci/appstudio-utils:1610c1fc4cfc9c9053dbefc1146904a4df6659ef@sha256:90ac97b811073cb99a23232c15a08082b586c702b85da6200cf54ef505e3c50c
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       script: |
         #!/usr/bin/env bash
         set -o errexit -o nounset -o pipefail
@@ -124,8 +124,9 @@ spec:
             "${cosign_args[@]}" \
             "$image" > "$WORKDIR/$image/attestation.json"
         done
+      imagePullPolicy: Always
     - name: download-sboms
-      image: quay.io/konflux-ci/appstudio-utils:1610c1fc4cfc9c9053dbefc1146904a4df6659ef@sha256:90ac97b811073cb99a23232c15a08082b586c702b85da6200cf54ef505e3c50c
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       script: |
         #!/usr/bin/env bash
         set -o errexit -o nounset -o pipefail
@@ -298,3 +299,4 @@ spec:
             mkdir -p "$SBOMS_DIR/$image"
             download_blob "$sbom_blob_url" "$SBOMS_DIR/$image/sbom.json"
         done
+      imagePullPolicy: Always

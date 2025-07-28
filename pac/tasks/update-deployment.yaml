@@ -23,7 +23,7 @@ spec:
       optional: true
   steps:
     - name: patch-gitops
-      image: quay.io/konflux-ci/appstudio-utils:1610c1fc4cfc9c9053dbefc1146904a4df6659ef@sha256:90ac97b811073cb99a23232c15a08082b586c702b85da6200cf54ef505e3c50c
+      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       env:
         - name: PARAM_GITOPS_REPO_URL
           value: $(params.gitops-repo-url)
@@ -33,7 +33,7 @@ spec:
           value: $(workspaces.gitops-auth.bound)
         - name: WORKSPACE_GITOPS_AUTH_DIRECTORY_PATH
           value: $(workspaces.gitops-auth.path)
-      script: |2
+      script: |
         if [ "${WORKSPACE_GITOPS_AUTH_DIRECTORY_BOUND}" = "true" ] ; then
           if [ -f "${WORKSPACE_GITOPS_AUTH_DIRECTORY_PATH}/.git-credentials" ] && [ -f "${WORKSPACE_GITOPS_AUTH_DIRECTORY_PATH}/.gitconfig" ]; then
             cp "${WORKSPACE_GITOPS_AUTH_DIRECTORY_PATH}/.git-credentials" "${HOME}/.git-credentials"
@@ -80,3 +80,4 @@ spec:
           exit 1
         }
         echo "Successfully updated development image from ${old_image} to ${PARAM_IMAGE}"
+      imagePullPolicy: Always
