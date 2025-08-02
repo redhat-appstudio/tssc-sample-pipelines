@@ -34,6 +34,7 @@ spec:
         - name: WORKSPACE_GITOPS_AUTH_DIRECTORY_PATH
           value: $(workspaces.gitops-auth.path)
       script: |2
+
         if [ "${WORKSPACE_GITOPS_AUTH_DIRECTORY_BOUND}" = "true" ] ; then
           if [ -f "${WORKSPACE_GITOPS_AUTH_DIRECTORY_PATH}/.git-credentials" ] && [ -f "${WORKSPACE_GITOPS_AUTH_DIRECTORY_PATH}/.gitconfig" ]; then
             cp "${WORKSPACE_GITOPS_AUTH_DIRECTORY_PATH}/.git-credentials" "${HOME}/.git-credentials"

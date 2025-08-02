@@ -34,7 +34,7 @@ spec:
         resource) to use. `namespace/name` or `name` syntax supported. If
         namespace is omitted the namespace where the task runs is used.
         You can also specify a policy configuration using a git url, e.g.
-        `github.com/conforma/config//slsa3`.
+        `github.com/enterprise-contract/config//slsa3`.
       name: POLICY_CONFIGURATION
       type: string
     - default: ""
