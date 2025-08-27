@@ -23,7 +23,7 @@ spec:
       name: LINK_TO_SBOM
   steps:
     - name: annotate-task
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       script: |
         #!/usr/bin/env bash
 
@@ -34,7 +34,7 @@ spec:
         oc annotate taskrun $(context.taskRun.name) task.output.location=results
       imagePullPolicy: Always
     - name: show-sbom
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       env:
         - name: IMAGE_URL
           value: $(params.IMAGE_URL)

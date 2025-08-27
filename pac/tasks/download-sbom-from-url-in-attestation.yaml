@@ -84,7 +84,7 @@ spec:
         value: /tekton/home
   steps:
     - name: download-attestations
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       script: |
         #!/usr/bin/env bash
         set -o errexit -o nounset -o pipefail
@@ -126,7 +126,7 @@ spec:
         done
       imagePullPolicy: Always
     - name: download-sboms
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       script: |
         #!/usr/bin/env bash
         set -o errexit -o nounset -o pipefail

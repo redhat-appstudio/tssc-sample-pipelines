@@ -48,7 +48,7 @@ spec:
         sizeLimit: 50Mi
   steps:
     - name: annotate-task
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       script: |
         #!/usr/bin/env bash
         echo "acs-image-scan $(context.taskRun.name)"
@@ -59,7 +59,7 @@ spec:
         oc annotate taskrun $(context.taskRun.name) task.output.location=logs
       imagePullPolicy: Always
     - name: rox-image-scan
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       volumeMounts:
         - name: rox-secret
           mountPath: /rox-secret
@@ -170,7 +170,7 @@ spec:
         set_test_output_result SUCCESS "$note"
       imagePullPolicy: Always
     - name: report
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       volumeMounts:
         - name: shared-folder
           mountPath: /steps-shared-folder

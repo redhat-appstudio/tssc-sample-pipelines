@@ -23,7 +23,7 @@ spec:
       description: Defines if the image in param image-url should be built
   steps:
     - name: init
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       computeResources:
         limits:
           memory: 256Mi
