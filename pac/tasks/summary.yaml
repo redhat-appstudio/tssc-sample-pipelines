@@ -26,7 +26,7 @@ spec:
       optional: true
   steps:
     - name: appstudio-summary
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       # per https://kubernetes.io/docs/concepts/containers/images/#imagepullpolicy-defaulting
       # the cluster will set imagePullPolicy to IfNotPresent
       env:

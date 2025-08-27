@@ -70,7 +70,7 @@ if [ $CREATE_CATALOG == "true" ]; then
   mkdir -p $TASKS_CATALOG_EXPORT
 fi
 
-RUNNER_IMAGE='quay.io/redhat-appstudio/rhtap-task-runner:latest'
+RUNNER_IMAGE='quay.io/redhat-tssc/task-runner:1.7'
 
 for pipeline in $OUTPUT_PIPELINES_DIR/* ;  do
   echo

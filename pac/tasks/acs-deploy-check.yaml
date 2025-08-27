@@ -45,7 +45,7 @@ spec:
       optional: true
   steps:
     - name: annotate-task
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       script: |
         #!/usr/bin/env bash
         echo "acs-deploy-check $(context.taskRun.name)"
@@ -55,7 +55,7 @@ spec:
         oc annotate taskrun $(context.taskRun.name) task.output.location=logs
       imagePullPolicy: Always
     - name: rox-deploy-check
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       volumeMounts:
         - name: repository
           mountPath: /workspace/repository
@@ -152,7 +152,7 @@ spec:
         fi
       imagePullPolicy: Always
     - name: report
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.7
       volumeMounts:
         - name: repository
           mountPath: /workspace/repository
