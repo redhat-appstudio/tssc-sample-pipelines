@@ -2,124 +2,60 @@
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 [ -x $SCRIPTDIR/configure ] && source $SCRIPTDIR/configure
 
-# Import build definition into the samples templates repo
-# This repo can be used unmodified from pac to run pipelines
-# PEs can fork, and customize and update for day 2 maintaintainance of the pipelines
+# Import build definition tasks from build-definitions repo
+# Only imports the 3 tasks that are still maintained in build-definitions:
+# - init
+# - git-clone
+# - summary
+# All other tasks and pipelines are now maintained locally in this repo
 
 if [ -z "$BUILD_DEFINITIONS" ]; then
     BUILD_DEFINITIONS="${1:-$HOME/dev/build-definitions}"
 fi
-TASKS_CATALOG_EXPORT=$(realpath $SCRIPTDIR/../tasks)
-PIPELINES_CATALOG_EXPORT=$(realpath $SCRIPTDIR/../pipelines)
 DEFAULT_EXPORT=$(realpath $SCRIPTDIR/../pac)
 if [ -z "$EXPORT_DIR" ]; then
     EXPORT_DIR="${2:-$DEFAULT_EXPORT}"
 fi
 
-echo "Import Pipelines From $BUILD_DEFINITIONS"
-echo "Copy Pipelines Into $EXPORT_DIR"
+echo "Import Tasks From $BUILD_DEFINITIONS"
+echo "Copy Tasks Into $EXPORT_DIR/tasks"
 
 IMPORT_TASKS_DIR=${BUILD_DEFINITIONS}/task
-IMPORT_PIPELINES_DIR=${BUILD_DEFINITIONS}/pipelines
-
 OUTPUT_TASKS_DIR=$EXPORT_DIR/tasks
 OUTPUT_PIPELINES_DIR=$EXPORT_DIR/pipelines
 
-rm -rf $OUTPUT_TASKS_DIR
+# Create tasks directory if it doesn't exist
 mkdir -p $OUTPUT_TASKS_DIR
-rm -rf $OUTPUT_PIPELINES_DIR
-mkdir -p $OUTPUT_PIPELINES_DIR
 
-
-
-if [ -d $IMPORT_PIPELINES_DIR/rhtap ]; then
-  echo "Using RHTAP from Build definitions"
-  IMPORT_PIPELINES_DIR="$IMPORT_PIPELINES_DIR/rhtap"
-else
-  echo "Failed to find rhtap pipelines at $IMPORT_PIPELINES_DIR/rhtap"
-  exit 1
-fi
-
-# do pipelines first, and then only copy tasks required by those pipelines
-INDIVIDUAL_PIPELINES=$( yq .resources $IMPORT_PIPELINES_DIR/kustomization.yaml  | sed s/-// | xargs -n1 echo -n " ")
-
-for pipe in $INDIVIDUAL_PIPELINES
-do
-echo $pipe
-PIPE_FILE_OR_DIR=$IMPORT_PIPELINES_DIR/$pipe
-if [ -f $PIPE_FILE_OR_DIR ]; then
-    cp $PIPE_FILE_OR_DIR $OUTPUT_PIPELINES_DIR/$pipe
-  elif [ -f $PIPE_FILE_OR_DIR/kustomization.yaml ]; then
-    OUT_FILE=$(basename $pipe)
-    kustomize build $PIPE_FILE_OR_DIR | \
-      yq e 'del(.items.[] | .spec.tasks.[] | .taskRef.version, .items.[] | .spec.finally.[] | .taskRef.version)' | \
-      yq e 'del(.spec.tasks.[].taskRef.version)' | \
-      yq e 'del(.spec.finally.[].taskRef.version)' | \
-      cat  > $OUTPUT_PIPELINES_DIR/$OUT_FILE.yaml
-  else
-    echo Unable to process pipeline in $IMPORT_PIPELINES_DIR/$pipe
-  fi
-
-done
-
-CREATE_CATALOG=false
-rm -rf $PIPELINES_CATALOG_EXPORT
-rm -rf $TASKS_CATALOG_EXPORT
-if [ $CREATE_CATALOG == "true" ]; then
-  mkdir -p $PIPELINES_CATALOG_EXPORT
-  mkdir -p $TASKS_CATALOG_EXPORT
-fi
+# Only sync these 3 tasks from build-definitions
+TASKS_TO_SYNC="init git-clone summary"
 
 RUNNER_IMAGE='quay.io/redhat-appstudio/rhtap-task-runner:latest'
 
-for pipeline in $OUTPUT_PIPELINES_DIR/* ;  do
-  echo
-  echo $pipeline
-  TASKS=$(yq .spec.tasks.[].taskRef.name $pipeline )
-  FINALLY=$(yq .spec.finally.[].taskRef.name $pipeline )
-  # Temporarily keep some to ensure existing templates work
-  # until they have been merged for backwards compatibilty
-  KEEP=""
+echo
+echo "Syncing tasks from build-definitions:"
+for task in $TASKS_TO_SYNC
+do
+  echo " $task in $task.yaml"
 
-  echo "Tasks referenced from $(basename $pipeline):"
-  for task in $TASKS $FINALLY $KEEP
-  do
-    if [ $CREATE_CATALOG == "true" ]; then
-      echo "Catalog "
-      cp -r $IMPORT_TASKS_DIR/$task/ $TASKS_CATALOG_EXPORT/$task
-    fi
+  # Find the latest version directory for this task
+  VERSIONDIR=$(ls -d $IMPORT_TASKS_DIR/$task/*/ | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n | tail -n1)
 
-    VERSIONDIR=$(ls -d $IMPORT_TASKS_DIR/$task/*/ | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n | tail -n1)
-    echo " $task in $task.yaml"
-    if [ -f $VERSIONDIR/$task.yaml ]; then
-      cp $VERSIONDIR/$task.yaml $OUTPUT_TASKS_DIR/$task.yaml
-    elif [ -f $VERSIONDIR/kustomization.yaml ]; then
-      kustomize build $VERSIONDIR > $OUTPUT_TASKS_DIR/$task.yaml
-    else
-      echo Unable to apply task in $VERSIONDIR
-    fi
+  if [ -f $VERSIONDIR/$task.yaml ]; then
+    cp $VERSIONDIR/$task.yaml $OUTPUT_TASKS_DIR/$task.yaml
+  elif [ -f $VERSIONDIR/kustomization.yaml ]; then
+    kustomize build $VERSIONDIR > $OUTPUT_TASKS_DIR/$task.yaml
+  else
+    echo "ERROR: Unable to find task definition in $VERSIONDIR"
+    exit 1
+  fi
 
-    # Change all the Tasks to use the RHADS-ssc runner image. The image reference is by tag which
-    # helps pushing out fixes. For this reason, the image pull policy is also configured to always
-    # check for the availability of a new image.
-    yq -i \
-        '.spec.steps[] *= {"image": "'${RUNNER_IMAGE}'","imagePullPolicy":"Always"}' \
-        "${OUTPUT_TASKS_DIR}/${task}.yaml"
-
-    # To run buildah within a container, we need to set a couple of environment variables to get
-    # around certain permission restrictions. These are the same ones that are set on the official
-    # Red Hat buildah image, as seen in their Dockerfile:
-    # https://catalog.redhat.com/software/containers/ubi10/buildah/673c73f6d9b2c90f6205aeb3?container-tabs=dockerfile
-    if [ "$task" == 'buildah-rhtap' ]; then
-        yq -i \
-            '.spec.stepTemplate.env += [
-                {"name":"_BUILDAH_STARTED_IN_USERNS","value":""},
-                {"name":"BUILDAH_ISOLATION","value":"chroot"
-            }]' \
-            "${OUTPUT_TASKS_DIR}/${task}.yaml"
-    fi
-
-  done
+  # Change all the Tasks to use the RHADS-ssc runner image. The image reference is by tag which
+  # helps pushing out fixes. For this reason, the image pull policy is also configured to always
+  # check for the availability of a new image.
+  yq -i \
+      '.spec.steps[] *= {"image": "'${RUNNER_IMAGE}'","imagePullPolicy":"Always"}' \
+      "${OUTPUT_TASKS_DIR}/${task}.yaml"
 done
 
 echo
