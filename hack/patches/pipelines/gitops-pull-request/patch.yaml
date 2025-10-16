@@ -1,9 +1,0 @@
-- op: replace
-  # The 3 indexed param is expected to be 'ec-policy-configuration'
-  path: /spec/params/3/default
-  # The original value here is 'github.com/conforma/config//default'
-  # which specifies a config file that pulls in the latest rego rules from the main
-  # branch in the enterprise-contract/ec-policies repo. Change it to a config file
-  # that uses a stable release branch of the ec-policies repo for better stability
-  # in general, and better ongoing compatibility with ec v0.4.
-  value: github.com/conforma/config//tekton-slsa3-v0.6

@@ -3,6 +3,18 @@
 These pipelines are in standard tekton format.
 They can be found in ./pac/pipelines and ./pac/tasks.
 
+## Maintenance Model
+
+This repository maintains its own pipelines and most tasks. Only 3 tasks are synchronized from the [build-definitions](https://github.com/redhat-appstudio/build-definitions) repository:
+- `init` - Initialize pipeline task with rebuild flags
+- `git-clone` - Clone source repository
+- `summary` - Pipeline summary and reporting
+
+All other tasks and all pipelines are maintained directly in this repository. To update the synchronized tasks, run:
+```bash
+hack/import-build-definitions
+```
+
 # Installation and usage
 
 Depending on the use case there are two ways of consuming of the RHTAP pipeline:
