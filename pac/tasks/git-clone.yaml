@@ -252,7 +252,8 @@ spec:
           -sslVerify="${PARAM_SSL_VERIFY}" \
           -submodules="${PARAM_SUBMODULES}" \
           -depth="${PARAM_DEPTH}" \
-          -sparseCheckoutDirectories="${PARAM_SPARSE_CHECKOUT_DIRECTORIES}"
+          -sparseCheckoutDirectories="${PARAM_SPARSE_CHECKOUT_DIRECTORIES}" \
+          -retryMaxAttempts=10
         cd "${CHECKOUT_DIR}"
         RESULT_SHA="$(git rev-parse HEAD)"
         RESULT_SHA_SHORT="$(git rev-parse --short="${PARAM_SHORT_COMMIT_LENGTH}" HEAD)"
@@ -263,7 +264,7 @@ spec:
         if [ "${PARAM_MERGE_TARGET_BRANCH}" = "true" ]; then
           echo "Merge option enabled. Attempting to merge target branch '${PARAM_TARGET_BRANCH}' into HEAD (${RESULT_SHA})."
           echo "Fetching target branch '${PARAM_TARGET_BRANCH}'..."
-          git fetch origin "${PARAM_TARGET_BRANCH}"
+          retry git fetch origin "${PARAM_TARGET_BRANCH}"
           FETCH_EXIT_CODE="$?"
           if [ "${FETCH_EXIT_CODE}" != "0" ]; then
             echo "ERROR: Failed to fetch target branch '${PARAM_TARGET_BRANCH}'." >&2
@@ -309,10 +310,7 @@ spec:
 
         if [ "${PARAM_FETCH_TAGS}" = "true" ] ; then
           echo "Fetching tags"
-          if ! git fetch --tags; then
-            echo "Retrying fetch command..."
-            git fetch --tags
-          fi
+          retry git fetch --tags
         fi
       imagePullPolicy: Always
     - name: symlink-check
