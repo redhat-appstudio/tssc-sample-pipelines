@@ -1,9 +1,6 @@
 # See the OWNERS docs: https://go.k8s.io/owners
 approvers:
-- mmorhun
-- chmeliik
 - xinredhat
 - prietyc123
 - flacatus
 - lcarva
-- tnevrlka
