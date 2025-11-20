@@ -30,7 +30,7 @@ mkdir -p $OUTPUT_TASKS_DIR
 # Only sync these 3 tasks from build-definitions
 TASKS_TO_SYNC="init git-clone summary"
 
-RUNNER_IMAGE='quay.io/redhat-appstudio/rhtap-task-runner:latest'
+RUNNER_IMAGE='quay.io/redhat-tssc/task-runner:1.8'
 
 echo
 echo "Syncing tasks from build-definitions:"

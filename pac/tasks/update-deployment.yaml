@@ -23,7 +23,7 @@ spec:
       optional: true
   steps:
     - name: patch-gitops
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.8
       env:
         - name: PARAM_GITOPS_REPO_URL
           value: $(params.gitops-repo-url)

@@ -69,7 +69,7 @@ spec:
         value: chroot
   steps:
     - name: build
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.8
       args:
         - $(params.BUILD_ARGS[*])
       script: |
@@ -164,7 +164,7 @@ spec:
       workingDir: $(workspaces.source.path)
       imagePullPolicy: Always
     - name: generate-sboms
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.8
       # Respect Syft configuration if the user has it in the root of their repository
       # (need to set the workdir, see https://github.com/anchore/syft/issues/2465)
       workingDir: $(workspaces.source.path)/source
@@ -178,7 +178,7 @@ spec:
           name: tmpfiles
       imagePullPolicy: Always
     - name: merge-sboms
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.8
       env:
         - name: RESULT_PATH
           value: $(results.SBOM_BLOB_URL.path)
@@ -246,7 +246,7 @@ spec:
       workingDir: /tmp/files
       imagePullPolicy: Always
     - name: upload-sbom
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.8
       command:
         - cosign
       args:

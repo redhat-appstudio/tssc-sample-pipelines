@@ -78,7 +78,7 @@ spec:
         mountPath: /run/secrets/trustification
   steps:
     - name: gather-sboms
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.8
       script: |
         #!/usr/bin/env bash
         set -o errexit -o nounset -o pipefail
@@ -138,7 +138,7 @@ spec:
       imagePullPolicy: Always
     # Needs syft, which is in a different image => has to be a separate step
     - name: convert-sboms-if-needed
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.8
       script: |
         #!/usr/bin/env bash
         set -o errexit -o nounset -o pipefail
@@ -163,7 +163,7 @@ spec:
         done
       imagePullPolicy: Always
     - name: upload-sboms
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.8
       volumeMounts:
         - name: shared-folder
           mountPath: /steps-shared-folder
@@ -263,7 +263,7 @@ spec:
         done
       imagePullPolicy: Always
     - name: report
-      image: quay.io/redhat-appstudio/rhtap-task-runner:latest
+      image: quay.io/redhat-tssc/task-runner:1.8
       volumeMounts:
         - name: shared-folder
           mountPath: /steps-shared-folder
