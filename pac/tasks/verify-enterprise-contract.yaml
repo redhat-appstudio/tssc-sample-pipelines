@@ -41,17 +41,9 @@ spec:
       description: Public key used to verify signatures. Must be a valid k8s cosign reference, e.g. k8s://my-space/my-secret where my-secret contains the expected cosign.pub attribute.
       name: PUBLIC_KEY
       type: string
-    - default: ""
-      description: Rekor host for transparency log lookups
-      name: REKOR_HOST
-      type: string
     - default: "false"
       description: Skip Rekor transparency log checks during validation.
       name: IGNORE_REKOR
-      type: string
-    - default: ""
-      description: TUF mirror URL. Provide a value when NOT using public sigstore deployment.
-      name: TUF_MIRROR
       type: string
     - default: ""
       description: |
@@ -124,7 +116,10 @@ spec:
   steps:
     - env:
         - name: TUF_MIRROR
-          value: $(params.TUF_MIRROR)
+          valueFrom:
+            secretKeyRef:
+              name: tas-secret
+              key: tuf_url
       image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       imagePullPolicy: Always
       name: initialize-tuf
@@ -156,37 +151,7 @@ spec:
       imagePullPolicy: Always
       name: reduce
       onError: continue
-    - args:
-        - validate
-        - image
-        - --verbose
-        - --images
-        - /tekton/home/snapshot.json
-        - --policy
-        - $(params.POLICY_CONFIGURATION)
-        - --public-key
-        - $(params.PUBLIC_KEY)
-        - --rekor-url
-        - $(params.REKOR_HOST)
-        - --ignore-rekor=$(params.IGNORE_REKOR)
-        - --workers
-        - $(params.WORKERS)
-        - --info=$(params.INFO)
-        - --timeout=100h
-        - --strict=false
-        - --show-successes
-        - --effective-time=$(params.EFFECTIVE_TIME)
-        - --extra-rule-data=$(params.EXTRA_RULE_DATA)
-        - --output
-        - text?show-successes=false
-        - --output
-        - appstudio=$(results.TEST_OUTPUT.path)
-        - --output
-        - json=$(params.HOMEDIR)/report-json.json
-        - --logfile=$(params.HOMEDIR)/debug.log
-      command:
-        - ec
-      computeResources:
+    - computeResources:
         limits:
           memory: 2Gi
         requests:
@@ -197,10 +162,37 @@ spec:
           value: /tekton-custom-certs:/etc/ssl/certs:/etc/pki/tls/certs:/system/etc/security/cacerts:$(params.SSL_CERT_DIR)
         - name: EC_CACHE
           value: "false"
+        - name: REKOR_HOST
+          valueFrom:
+            secretKeyRef:
+              name: tas-secret
+              key: rekor_url
       image: quay.io/redhat-appstudio/rhtap-task-runner:latest
       imagePullPolicy: Always
       name: validate
       onError: continue
+      script: |
+        #!/usr/bin/env bash
+        set -o errexit -o nounset -o pipefail
+
+        ec validate image \
+        --verbose \
+        --images /tekton/home/snapshot.json \
+        --policy $(params.POLICY_CONFIGURATION) \
+        --public-key $(params.PUBLIC_KEY) \
+        --rekor-url $REKOR_HOST \
+        --ignore-rekor=$(params.IGNORE_REKOR) \
+        --workers $(params.WORKERS) \
+        --info=$(params.INFO) \
+        --timeout=100h \
+        --strict=false \
+        --show-successes \
+        --effective-time=$(params.EFFECTIVE_TIME) \
+        --extra-rule-data=$(params.EXTRA_RULE_DATA) \
+        --output text?show-successes=false \
+        --output appstudio=$(results.TEST_OUTPUT.path) \
+        --output json=$(params.HOMEDIR)/report-json.json \
+        --logfile=$(params.HOMEDIR)/debug.log
       volumeMounts:
         - mountPath: /etc/pki/tls/certs/ca-custom-bundle.crt
           name: trusted-ca

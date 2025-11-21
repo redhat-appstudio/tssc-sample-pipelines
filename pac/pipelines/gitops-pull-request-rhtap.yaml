@@ -80,10 +80,6 @@ spec:
           value: $(params.ec-policy-configuration)
         - name: PUBLIC_KEY
           value: $(params.ec-public-key)
-        - name: REKOR_HOST
-          value: $(params.ec-rekor-host)
-        - name: TUF_MIRROR
-          value: $(params.ec-tuf-mirror)
       runAfter:
         - get-images-to-verify
       taskRef:
@@ -116,10 +112,6 @@ spec:
           value: sboms
         - name: PUBLIC_KEY
           value: $(params.ec-public-key)
-        - name: REKOR_HOST
-          value: $(params.ec-rekor-host)
-        - name: TUF_MIRROR
-          value: $(params.ec-tuf-mirror)
       runAfter:
         - get-images-to-upload-sbom
       taskRef:
