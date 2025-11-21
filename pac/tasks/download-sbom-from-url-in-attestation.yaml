@@ -49,18 +49,10 @@ spec:
       type: string
       description: Public key used to verify signatures. Must be a valid k8s cosign reference, e.g. k8s://my-space/my-secret where my-secret contains the expected cosign.pub attribute.
       default: ""
-    - name: REKOR_HOST
-      type: string
-      description: Rekor host for transparency log lookups
-      default: ""
     - name: IGNORE_REKOR
       type: string
       description: Skip Rekor transparency log checks during validation.
       default: "false"
-    - name: TUF_MIRROR
-      type: string
-      description: TUF mirror URL. Provide a value when NOT using public sigstore deployment.
-      default: ""
   workspaces:
     - name: sboms
       description: SBOMs will be downloaded to (a subdirectory of) this workspace.
@@ -75,11 +67,17 @@ spec:
       - name: PUBLIC_KEY
         value: $(params.PUBLIC_KEY)
       - name: REKOR_HOST
-        value: $(params.REKOR_HOST)
+        valueFrom:
+          secretKeyRef:
+            name: tas-secret
+            key: rekor_url
       - name: IGNORE_REKOR
         value: $(params.IGNORE_REKOR)
       - name: TUF_MIRROR
-        value: $(params.TUF_MIRROR)
+        valueFrom:
+          secretKeyRef:
+            name: tas-secret
+            key: tuf_url
       - name: WORKDIR
         value: /tekton/home
   steps:
