@@ -48,7 +48,8 @@ spec:
           image=$(yq "$IMAGE_PATH" "$yaml_path")
 
           if [ -n "$TARGET_BRANCH" ]; then
-            prev_image=$(git show "origin/$TARGET_BRANCH:$yaml_path" | yq "$IMAGE_PATH")
+            git fetch origin $TARGET_BRANCH
+            prev_image=$(git show "FETCH_HEAD:$yaml_path" | yq "$IMAGE_PATH")
             if [ "$prev_image" = "$image" ]; then
               # don't check images that didn't change between the current revision and the target branch
               continue
