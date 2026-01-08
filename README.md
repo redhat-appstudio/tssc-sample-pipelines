@@ -1,3 +1,7 @@
+# Deprecation Notice
+This repository is deprecated after tssc-dev-multi-ci repo consolidation [PR 652](https://github.com/redhat-appstudio/tssc-dev-multi-ci/pull/652) merged.
+Any changes to tekton pipelines for RHADS should be done under https://github.com/redhat-appstudio/tssc-dev-multi-ci/tree/main/samples/tekton.
+
 # RHTAP standard pipelines
 
 These pipelines are in standard tekton format.
